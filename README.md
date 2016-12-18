@@ -9,18 +9,13 @@
 ```shellscript
 $ python performance-monitor.py #使用时会将发送给 influxdb 的数据打印. 可以修改代码关闭.
 
-2016-12-19 00:58:53,028 INFO  - [{'fields': {'nice': 0.0, 'idle': 780431.98, 'system': 23932.3, 'user': 37412.35}, 'time': '2016-12-18T16:58:53.028291+00:00', 'tags': {'region': 'us-west', 'disk': False, 'host': 'MacBook-Pro.local'
-}, 'measurement': 'cpu'}]
-2016-12-19 00:58:53,098 INFO  - [{'fields': {'total': 31645421568, 'percent': 97.0, 'used': 30452658176, 'free': 930619392}, 'time': '2016-12-18T16:58:53.028291+00:00', 'tags': {'region': 'us-west', 'disk': '/Volumes/ftp', 'host':
-'MacBook-Pro.local'}, 'measurement': 'disk'}]
-2016-12-19 00:58:53,138 INFO  - [{'fields': {'total': 31645421568, 'percent': 97.0, 'used': 30452658176, 'free': 930619392}, 'time': '2016-12-18T16:58:53.028291+00:00', 'tags': {'region': 'us-west', 'disk': '/Volumes/My Data', 'hos
-t': 'MacBook-Pro.local'}, 'measurement': 'disk'}]
-2016-12-19 00:58:53,201 INFO  - [{'fields': {'total': 31645421568, 'percent': 97.0, 'used': 30452658176, 'free': 930619392}, 'time': '2016-12-18T16:58:53.028291+00:00', 'tags': {'region': 'us-west', 'disk': '/', 'host': 'MacBook-Pr
-o.local'}, 'measurement': 'disk'}]
-2016-12-19 00:58:53,246 INFO  - [{'fields': {'total': 31645421568, 'percent': 97.0, 'used': 30452658176, 'free': 930619392}, 'time': '2016-12-18T16:58:53.028291+00:00', 'tags': {'region': 'us-west', 'disk': '/Volumes/Untitled', 'ho
-st': 'MacBook-Pro.local'}, 'measurement': 'disk'}]
-2016-12-19 00:58:53,274 INFO  - [{'fields': {'total': 17179869184, 'active': 9035608064, 'available': 5725958144, 'wired': 1949495296, 'inactive': 5535584256, 'percent': 66.7, 'used': 16520687616, 'free': 190373888}, 'time': '2016-
-12-18T16:58:53.028291+00:00', 'tags': {'region': 'us-west', 'disk': False, 'host': 'MacBook-Pro.local'}, 'measurement': 'memory'}]
-2016-12-19 00:58:53,305 INFO  - [{'fields': {'dropout': 0, 'packets_sent': 2755297, 'errin': 0, 'bytes_sent': 1042639076, 'packets_recv': 3622496, 'errout': 0, 'bytes_recv': 3038254885, 'dropin': 0}, 'time': '2016-12-18T16:58:53.02
-8291+00:00', 'tags': {'region': 'us-west', 'disk': False, 'host': 'MacBook-Pro.local'}, 'measurement': 'network'}]
+2016-12-19 07:54:43,979 INFO  - [{'measurement': 'memory', 'time': '2016-12-18T23:54:43.258035+00:00', 'tags': {'region': 'us-west', 'disk': None, 'host': 'MacBook-Pro.local'}, 'fields': {'total': 17179869184, 'inactive': 4581322752, 'available': 5093101568, 'active': 9624330240, 'used': 16166903808, 'wired': 1961250816, 'free': 511778816, 'percent': 70.4}}]
+2016-12-19 07:54:44,038 INFO  - [{'measurement': 'network', 'time': '2016-12-18T23:54:43.258035+00:00', 'tags': {'region': 'us-west', 'disk': None, 'host': 'MacBook-Pro.local'}, 'fields': {'packets_recv': 3887002, 'bytes_recv': 3096850918, 'packets_sent': 3062658, 'dropout': 0, 'dropin': 0, 'errout': 0, 'bytes_sent': 1103373801, 'errin': 0}}]
+2016-12-19 07:54:49,626 INFO  - [{'measurement': 'cpu', 'time': '2016-12-18T23:54:49.625942+00:00', 'tags': {'region': 'us-west', 'disk': None, 'host': 'MacBook-Pro.local'}, 'fields': {'idle': 974277.24, 'nice': 0.0, 'user': 40822.26, 'system': 26323.14}}]
+2016-12-19 07:54:50,049 INFO  - [{'measurement': 'disk', 'time': '2016-12-18T23:54:49.625942+00:00', 'tags': {'region': 'us-west', 'disk': '/Volumes/ftp', 'host': 'MacBook-Pro.local'}, 'fields': {'used': 33304731648, 'percent': 77.5, 'free': 9646735360, 'total': 42951467008}}]
+2016-12-19 07:54:50,111 INFO  - [{'measurement': 'disk', 'time': '2016-12-18T23:54:49.625942+00:00', 'tags': {'region': 'us-west', 'disk': '/Volumes/Untitled', 'host': 'MacBook-Pro.local'}, 'fields': {'used': 89772699648, 'percent': 95.0, 'free': 4681207808, 'total': 94453907456}}]
+2016-12-19 07:54:50,152 INFO  - [{'measurement': 'disk', 'time': '2016-12-18T23:54:49.625942+00:00', 'tags': {'region': 'us-west', 'disk': '/Volumes/My Data', 'host': 'MacBook-Pro.local'}, 'fields': {'used': 650238570496, 'percent': 67.9, 'free': 307013795840, 'total': 957252366336}}]
+2016-12-19 07:54:50,195 INFO  - [{'measurement': 'disk', 'time': '2016-12-18T23:54:49.625942+00:00', 'tags': {'region': 'us-west', 'disk': '/', 'host': 'MacBook-Pro.local'}, 'fields': {'used': 30317142016, 'percent': 96.6, 'free': 1066135552, 'total': 31645421568}}]
+2016-12-19 07:54:50,244 INFO  - [{'measurement': 'memory', 'time': '2016-12-18T23:54:49.625942+00:00', 'tags': {'region': 'us-west', 'disk': None, 'host': 'MacBook-Pro.local'}, 'fields': {'total': 17179869184, 'inactive': 4585308160, 'available': 5112082432, 'active': 9579761664, 'used': 16147304448, 'wired': 1982234624, 'free': 526774272, 'percent': 70.2}}]
+2016-12-19 07:54:50,312 INFO  - [{'measurement': 'network', 'time': '2016-12-18T23:54:49.625942+00:00', 'tags': {'region': 'us-west', 'disk': None, 'host': 'MacBook-Pro.local'}, 'fields': {'packets_recv': 3887114, 'bytes_recv': 3096870775, 'packets_sent': 3062787, 'dropout': 0, 'dropin': 0, 'errout': 0, 'bytes_sent': 1103402125, 'errin': 0}}]
 ```
