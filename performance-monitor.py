@@ -4,7 +4,9 @@ import sys
 import threading
 from influxdb import InfluxDBClient
 import os
+import logging
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s  - %(message)s')
 host, port, dbname = '192.168.20.168', 8086, 'monitor-performance3'
 hostname = os.uname()[1]
 
@@ -64,7 +66,7 @@ def init_data(measurement, time, value, disk=False):
 
 def send_data(measurement, time, value, disk=False):
     data = init_data(measurement, time, value, disk)
-    print(data)
+    logging.info(data)
     client.write_points(data)
 
 
