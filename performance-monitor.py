@@ -37,16 +37,14 @@ def get_disk():
     result = {}
     disks = [ disk[1] for disk in psutil.disk_partitions() ]
     for item in disks:
-        result[item] = dict(zip(['total', 'used', 'free', 'percent'], [ value for value in psutil.disk_usage('/') ]))
+        result[item] = dict(zip(['total', 'used', 'free', 'percent'], [ value for value in psutil.disk_usage(item) ]))
     return result
 
 
 def get_network():
-    result = {}
-    while not event.is_set():
-        net_ios = psutil.net_io_counters()
-        net_ios_data = dict(zip(['bytes_sent', 'bytes_recv', 'packets_sent', 'packets_recv', 'errin', 'errout', 'dropin', 'dropout'], net_ios))
-        return net_ios_data
+    net_ios = psutil.net_io_counters()
+    net_ios_data = dict(zip(['bytes_sent', 'bytes_recv', 'packets_sent', 'packets_recv', 'errin', 'errout', 'dropin', 'dropout'], net_ios))
+    return net_ios_data
 
 
 def init_data(measurement, time, value, disk=None):
