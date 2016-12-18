@@ -6,7 +6,7 @@
 
 这是一个简易的监控脚本 , 可以将数据存储到 `influxdb` 中.
 
-```python
+```shellscript
 $ python performance-monitor.py #使用时会将发送给 influxdb 的数据打印. 可以修改代码关闭.
 
 2016-12-19 00:58:53,028 INFO  - [{'fields': {'nice': 0.0, 'idle': 780431.98, 'system': 23932.3, 'user': 37412.35}, 'time': '2016-12-18T16:58:53.028291+00:00', 'tags': {'region': 'us-west', 'disk': False, 'host': 'MacBook-Pro.local'
