@@ -2,7 +2,7 @@
 
 本仓库中所有代码均在 `Python 3.5.2` 验证
 
-## performance-monitor useage
+## performance-monitor usage
 
 这是一个简易的监控脚本 , 可以将数据存储到 `influxdb` 中.
 
