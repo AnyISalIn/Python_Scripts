@@ -7,7 +7,7 @@ import os
 import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s  - %(message)s')
-host, port, dbname = '192.168.20.168', 8086, 'monitor-performance3'
+host, port, dbname = '192.168.20.168', 8086, 'monitor-performance4'
 hostname = os.uname()[1]
 
 event = threading.Event()
@@ -49,7 +49,7 @@ def get_network():
         return net_ios_data
 
 
-def init_data(measurement, time, value, disk=False):
+def init_data(measurement, time, value, disk=None):
     return [
         {
             "measurement": measurement,
@@ -64,7 +64,7 @@ def init_data(measurement, time, value, disk=False):
     ]
 
 
-def send_data(measurement, time, value, disk=False):
+def send_data(measurement, time, value, disk=None):
     data = init_data(measurement, time, value, disk)
     logging.info(data)
     client.write_points(data)
