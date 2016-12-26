@@ -38,12 +38,25 @@ def parse(main_pid):
 
 def send(data):
     if 'worker_count' in data.keys():
-        for key, value in data['worker_count'].items():
-            g.send(key, value)
+        worker_count = data['worker_count']
+        for key, value in worker_count.items():
+            worker_name = key.replace('.', '_')
+            worker_count = value
+            uni_data = '.'.join(['worker_count', worker_name])
+            g.send(uni_data, value)
+            logging.info('Send {} ==> {} success'.format(uni_data, value))
     else:
-        # g = graphitesend.init(graphite_server='localhost', group='worker_info')
-        # for
-        pass
+        woker_info = data['worker_info']
+        for key, value in woker_info.items():
+            if key == 'worker_name':
+                worker_name = woker_info['worker_name'].replace('.', '_')
+            elif key == 'memory_used':
+                memory_used = str(woker_info['memory_used'])
+            else:
+                pid = str(woker_info['pid'])
+        uni_data = '.'.join(['worker_info', worker_name, pid])
+        g.send(uni_data, memory_used)
+        logging.info('Send {} ==> {} success'.format(uni_data, memory_used))
 
 
 def main():
