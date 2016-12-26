@@ -23,10 +23,14 @@ def get_childrens(main_pid):
 def parse(main_pid):
     while not event.is_set():
         count = {}
-        children_pids = get_childrens(main_pid)
-        for pid in children_pids:
+        parse_pids = get_childrens(main_pid)
+        parse_pids.append(main_pid)
+        for pid in parse_pids:
             process_info = psutil.Process(pid)
-            worker_name = o.search(process_info.cmdline()[0]).groupdict()['name']
+            if pid == main_pid:
+                worker_name = 'MIQ Server'
+            else:
+                worker_name = o.search(process_info.cmdline()[0]).groupdict()['name']
             if worker_name not in count.keys():
                 count[worker_name] = 0
             count[worker_name] += 1
@@ -60,7 +64,10 @@ def send(data):
 
 
 def main():
-    for line in parse(int(sys.argv[1])):
+    for p in psutil.process_iter():
+        if 'MIQ Server' in  p.cmdline():
+            main_pid = p.pid
+    for line in parse(main_pid):
         send(line)
 
 
