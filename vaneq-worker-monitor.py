@@ -13,30 +13,45 @@ o = re.compile(pattern)
 g = graphitesend.init(graphite_server='localhost')
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s  - %(message)s')
 
+def get_main_pid():
+    while True:
+        for p in psutil.process_iter():
+            if 'MIQ Server' in  p.cmdline():
+                main_pid = p.pid
+                return main_pid
+        if 'main_pid' not in locals():
+            logging.error('Sorry, MIQ Server Not Found, Please execute systemctl start evmserverd')
+            event.wait(5)
+            continue
 
-def get_childrens(main_pid):
+
+def get_childrens():
+    main_pid = get_main_pid()
     childrens = psutil.Process(main_pid).children()
     children_pids = [ x.pid for x in childrens ]
-    return children_pids
+    return children_pids, main_pid
 
 
-def parse(main_pid):
+def parse():
     while not event.is_set():
         count = {}
-        parse_pids = get_childrens(main_pid)
+        parse_pids, main_pid = get_childrens()
         parse_pids.append(main_pid)
-        for pid in parse_pids:
-            process_info = psutil.Process(pid)
-            if pid == main_pid:
-                worker_name = 'MIQ Server'
-            else:
-                worker_name = o.search(process_info.cmdline()[0]).groupdict()['name']
-            if worker_name not in count.keys():
-                count[worker_name] = 0
-            count[worker_name] += 1
-            agg = dict(zip(['worker_name', 'pid', 'memory_used'], [worker_name, pid, process_info.memory_info().rss]))
-            yield {'worker_info': agg}
-        yield {'worker_count': count}
+        try:
+            for pid in parse_pids:
+                process_info = psutil.Process(pid)
+                if pid == main_pid:
+                    worker_name = 'MIQ Server'
+                else:
+                    worker_name = o.search(process_info.cmdline()[0]).groupdict()['name']
+                if worker_name not in count.keys():
+                    count[worker_name] = 0
+                count[worker_name] += 1
+                agg = dict(zip(['worker_name', 'pid', 'memory_used'], [worker_name, pid, process_info.memory_info().rss]))
+                yield {'worker_info': agg}
+            yield {'worker_count': count}
+        except Exception:
+            pass
         event.wait(5)
 
 
@@ -64,10 +79,7 @@ def send(data):
 
 
 def main():
-    for p in psutil.process_iter():
-        if 'MIQ Server' in  p.cmdline():
-            main_pid = p.pid
-    for line in parse(main_pid):
+    for line in parse():
         send(line)
 
 
