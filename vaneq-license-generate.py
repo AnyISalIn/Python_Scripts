@@ -1,11 +1,20 @@
 import os
 import json
+import argparse
 from subprocess import Popen
 from datetime import datetime, timedelta
+from uuid import getnode
+from copy import deepcopy
+from itsdangerous import JSONWebSignatureSerializer as Serializer
 
 LICENSE_ROOT = '/var/www/miq/vmdb/license/'
 VANEQ_LIC_GEN = os.path.join(LICENSE_ROOT, 'vaneqLicGen.jar')
 VANEQ_LIC_PUBLIC_KEY = os.path.join(LICENSE_ROOT, 'vaneq_pubkey.pub')
+s = Serializer('vaneq+1s', salt='vaneq+2s')
+
+parser = argparse.ArgumentParser(prog='license generate')
+parser.add_argument('-g', '--gen', dest='gen', help='gen info', default=False, action='store_true')
+args = parser.parse_args()
 
 
 class GenerateVaneQLicense(object):
@@ -50,10 +59,29 @@ class GenerateVaneQLicense(object):
     def _generate_cli(self):
         return ['/usr/bin/java', '-jar', VANEQ_LIC_GEN, VANEQ_LIC_PUBLIC_KEY, self.filename]
 
+    @property
+    def _get_mac(self):
+        return ':'.join(("%012X" % getnode())[i:i + 2] for i in range(0, 12, 2))
+
     def generate_license(self):
         self._write()
         Popen(self._generate_cli)
 
+    def _generate_content(self):
+        data = deepcopy(self._get_data())
+        data['client_mac_addresses'].append({'client_mac_addr': self._get_mac})
+        return data
+
+    def generate_encrypt_content(self):
+        return s.dumps(self._generate_content())
+
+    @staticmethod
+    def decrypt_content(data):
+        return s.loads(data)
+
 
 if __name__ == '__main__':
-    GenerateVaneQLicense().generate_license()
+    if args.gen:
+        print(GenerateVaneQLicense().generate_encrypt_content())
+    else:
+        GenerateVaneQLicense().generate_license()
