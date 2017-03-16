@@ -3,13 +3,14 @@ import json
 import argparse
 from subprocess import Popen
 from datetime import datetime, timedelta
-from uuid import getnode
+from uuid import getnode, uuid4
 from copy import deepcopy
 from itsdangerous import JSONWebSignatureSerializer as Serializer
 
 LICENSE_ROOT = '/var/www/miq/vmdb/license/'
 VANEQ_LIC_GEN = os.path.join(LICENSE_ROOT, 'vaneqLicGen.jar')
 VANEQ_LIC_PUBLIC_KEY = os.path.join(LICENSE_ROOT, 'vaneq_pubkey.pub')
+VANEQ_LIC_MAC_UUID = os.path.join(LICENSE_ROOT, 'mac_uuid')
 s = Serializer('vaneq+1s', salt='vaneq+2s')
 
 parser = argparse.ArgumentParser(prog='license generate')
@@ -63,6 +64,10 @@ class GenerateVaneQLicense(object):
     def _get_mac(self):
         return ':'.join(("%012X" % getnode())[i:i + 2] for i in range(0, 12, 2))
 
+    @property
+    def _get_uuid(self):
+        return str(uuid4())
+
     def generate_license(self):
         self._write()
         Popen(self._generate_cli)
@@ -70,10 +75,20 @@ class GenerateVaneQLicense(object):
     def _generate_content(self):
         data = deepcopy(self._get_data())
         data['client_mac_addresses'].append({'client_mac_addr': self._get_mac})
+        with open(VANEQ_LIC_MAC_UUID, 'r') as f:
+            vaneq_uuid = str(json.load(f)['uuid'])
+        data['client_system_uuids'].append({'client_system_uuid': vaneq_uuid})
         return data
 
     def generate_encrypt_content(self):
         return s.dumps(self._generate_content())
+
+    def generate_mac_uuid(self):
+        data = {}
+        data['mac'] = self._get_mac
+        data['uuid'] = self._get_uuid
+        with open(VANEQ_LIC_MAC_UUID, 'w') as f:
+            json.dump(data, f, indent=4)
 
     @staticmethod
     def decrypt_content(data):
@@ -81,7 +96,9 @@ class GenerateVaneQLicense(object):
 
 
 if __name__ == '__main__':
+    g = GenerateVaneQLicense()
     if args.gen:
-        print(GenerateVaneQLicense().generate_encrypt_content())
+        print(g.generate_encrypt_content())
     else:
-        GenerateVaneQLicense().generate_license()
+        g.generate_license()
+        g.generate_mac_uuid()
