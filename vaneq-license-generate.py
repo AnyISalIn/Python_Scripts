@@ -11,10 +11,13 @@ LICENSE_ROOT = '/var/www/miq/vmdb/license/'
 VANEQ_LIC_GEN = os.path.join(LICENSE_ROOT, 'vaneqLicGen.jar')
 VANEQ_LIC_PUBLIC_KEY = os.path.join(LICENSE_ROOT, 'vaneq_pubkey.pub')
 VANEQ_LIC_MAC_UUID = os.path.join(LICENSE_ROOT, 'mac_uuid')
+VANEQ_LIC_FILE = os.path.join(LICENSE_ROOT, 'vaneQLic')
 s = Serializer('vaneq+1s', salt='vaneq+2s')
 
 parser = argparse.ArgumentParser(prog='license generate')
 parser.add_argument('-g', '--gen', dest='gen', help='gen info', default=False, action='store_true')
+parser.add_argument('-l', '--license', dest='license', help='generate license', default=False, action='store_true')
+parser.add_argument('-d', '--decrypt', dest='encrypt_data', help='decrypt data', default=None)
 args = parser.parse_args()
 
 
@@ -54,7 +57,7 @@ class GenerateVaneQLicense(object):
 
     def _write(self):
         with open(self.filename, 'w') as out_file:
-            json.dump(self._get_data(), out_file, indent=4)
+            json.dump(self._generate_content(), out_file, indent=4)
 
     @property
     def _generate_cli(self):
@@ -70,13 +73,17 @@ class GenerateVaneQLicense(object):
 
     def generate_license(self):
         self._write()
+        if os.path.isfile(VANEQ_LIC_FILE):
+            os.remove(VANEQ_LIC_FILE)
         Popen(self._generate_cli)
 
     def _generate_content(self):
         data = deepcopy(self._get_data())
-        data['client_mac_addresses'].append({'client_mac_addr': self._get_mac})
         with open(VANEQ_LIC_MAC_UUID, 'r') as f:
-            vaneq_uuid = str(json.load(f)['uuid'])
+            d = json.load(f)
+            vaneq_mac = str(d['mac'])
+            vaneq_uuid = str(d['uuid'])
+        data['client_mac_addresses'].append({'client_mac_addr': vaneq_mac})
         data['client_system_uuids'].append({'client_system_uuid': vaneq_uuid})
         return data
 
@@ -99,6 +106,9 @@ if __name__ == '__main__':
     g = GenerateVaneQLicense()
     if args.gen:
         print(g.generate_encrypt_content())
-    else:
+    if args.license:
+        if not os.path.isfile(VANEQ_LIC_MAC_UUID):
+            g.generate_mac_uuid()
         g.generate_license()
-        g.generate_mac_uuid()
+    if args.encrypt_data is not None:
+        print(json.dumps(g.decrypt_content(args.encrypt_data), indent=4))
