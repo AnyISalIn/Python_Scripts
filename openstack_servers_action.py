@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 from keystoneauth1.identity import v3
 from keystoneauth1 import session
 from novaclient import client
@@ -41,11 +42,30 @@ nova = client.Client("2.1", session=s)
 
 if __name__ == '__main__':
     servers = nova.servers.list(search_opts={'all_tenants': 1})
+    if len(sys.argv) > 1:
+        action = sys.argv[1]
+    else:
+        action = 'start'
 
     for server in servers:
         if server.id in START_LIST:
-            if server.status != 'ACTIVE':
-                server.start()
-                logger.info('{} START'.format(server.name))
-            logger.info('{} STATUS IS {}, PASS'.format(
-                server.name, server.status))
+            if action == 'start':
+                if server.status != 'ACTIVE':
+                    server.start()
+                    logger.info('{} WILL START'.format(server.name))
+                else:
+                    logger.info('{} STATUS IS {}, PASS'.format(
+                        server.name, server.status))
+            elif action == 'stop':
+                if server.status != 'SHUTOFF':
+                    server.stop()
+                    logger.info('{} WILL SHUTOFF'.format(server.name))
+                else:
+                    logger.info('{} STATUS IS {}, PASS'.format(
+                        server.name, server.status))
+            elif action == 'status':
+                logger.info('{} STATUS IS {}'.format(
+                    server.name, server.status))
+            elif action == 'reboot':
+                server.reboot()
+                logger.info('{} WILL REBOOT'.format(server.name))
