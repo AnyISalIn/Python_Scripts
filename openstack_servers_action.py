@@ -20,8 +20,12 @@ START_LIST = {
     'ea5e75e0-e453-4483-bc62-1817a13f4799': 'vaneq-node4',
     '5fb567b2-5efe-4c69-8d00-30c8553084ff': 'windows-client',
     'c55d92cb-ddd9-4024-b753-cc1130e82bfa': 'proxy',
-    '3148c657-90ba-4732-a628-def13c000f9a': 'repo'
+    '3148c657-90ba-4732-a628-def13c000f9a': 'repo',
+    '87f6e02d-cde5-4722-93e0-6dff8e73d338': 'qiangpiao2',
+    '677c7ece-df3b-4835-b903-df24e0aef9c9': 'pyenv'
 }
+
+ACTION_LIST = ['start', 'status', 'stop', 'reboot']
 
 
 # set logger
@@ -46,6 +50,9 @@ if __name__ == '__main__':
         action = sys.argv[1]
     else:
         action = 'start'
+
+    if action not in ACTION_LIST:
+        raise Exception('Action Error')
 
     for server in servers:
         if server.id in START_LIST:
