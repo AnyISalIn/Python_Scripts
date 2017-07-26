@@ -7,8 +7,10 @@ from psycopg2.pool import SimpleConnectionPool
 from datetime import timedelta
 
 event = threading.Event()
-g = graphitesend.init(prefix='server_status', graphite_server='localhost', system_name='')
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s  - %(message)s')
+g = graphitesend.init(prefix='server_status',
+                      graphite_server='localhost', system_name='')
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s %(levelname)s  - %(message)s')
 
 
 class GetVaneQServersInfo:
@@ -41,10 +43,10 @@ class GetVaneQServersInfo:
                         result[new_key] = 1
                         continue
 
-
                     if key in ('last_heartbeat', 'started_on',
                                'stopped_on', 'last_update_check'):
-                        result[new_key] = (value + timedelta(hours=8)).strftime('%Y%m%d%H%M')
+                        result[new_key] = (
+                            value + timedelta(hours=8)).strftime('%Y%m%d%H%M')
                     elif key in ('memory_size', 'memory_usage',
                                  'proportional_set_size'):
                         result[new_key] = int(value)

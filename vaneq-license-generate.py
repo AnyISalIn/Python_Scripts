@@ -15,9 +15,12 @@ VANEQ_LIC_FILE = os.path.join(LICENSE_ROOT, 'vaneQLic')
 s = Serializer('vaneq+1s', salt='vaneq+2s')
 
 parser = argparse.ArgumentParser(prog='license generate')
-parser.add_argument('-g', '--gen', dest='gen', help='gen info', default=False, action='store_true')
-parser.add_argument('-l', '--license', dest='license', help='generate license', default=False, action='store_true')
-parser.add_argument('-d', '--decrypt', dest='encrypt_data', help='decrypt data', default=None)
+parser.add_argument('-g', '--gen', dest='gen', help='gen info',
+                    default=False, action='store_true')
+parser.add_argument('-l', '--license', dest='license',
+                    help='generate license', default=False, action='store_true')
+parser.add_argument('-d', '--decrypt', dest='encrypt_data',
+                    help='decrypt data', default=None)
 args = parser.parse_args()
 
 

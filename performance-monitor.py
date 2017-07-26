@@ -6,7 +6,8 @@ from influxdb import InfluxDBClient
 import os
 import logging
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s  - %(message)s')
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s %(levelname)s  - %(message)s')
 host, port, dbname = '192.168.20.168', 8086, 'monitor-performance4'
 hostname = os.uname()[1]
 
@@ -14,9 +15,10 @@ event = threading.Event()
 client = InfluxDBClient(host, port, dbname)
 client.switch_database(dbname)
 
+
 def db_init():
     db_list = client.get_list_database()
-    db_list = [ y for x in db_list for y in x.values() ]
+    db_list = [y for x in db_list for y in x.values()]
     if dbname not in db_list:
         client.create_database(dbname)
 
@@ -29,21 +31,24 @@ def get_cpu():
 
 def get_memory():
     mem_useage = psutil.virtual_memory()
-    data = dict(zip(['total', 'available', 'percent', 'used', 'free', 'active', 'inactive', 'wired'], mem_useage))
+    data = dict(zip(['total', 'available', 'percent', 'used',
+                     'free', 'active', 'inactive', 'wired'], mem_useage))
     return data
 
 
 def get_disk():
     result = {}
-    disks = [ disk[1] for disk in psutil.disk_partitions() ]
+    disks = [disk[1] for disk in psutil.disk_partitions()]
     for item in disks:
-        result[item] = dict(zip(['total', 'used', 'free', 'percent'], [ value for value in psutil.disk_usage(item) ]))
+        result[item] = dict(zip(['total', 'used', 'free', 'percent'], [
+                            value for value in psutil.disk_usage(item)]))
     return result
 
 
 def get_network():
     net_ios = psutil.net_io_counters()
-    net_ios_data = dict(zip(['bytes_sent', 'bytes_recv', 'packets_sent', 'packets_recv', 'errin', 'errout', 'dropin', 'dropout'], net_ios))
+    net_ios_data = dict(zip(['bytes_sent', 'bytes_recv', 'packets_sent',
+                             'packets_recv', 'errin', 'errout', 'dropin', 'dropout'], net_ios))
     return net_ios_data
 
 
