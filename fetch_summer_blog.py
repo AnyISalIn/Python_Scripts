@@ -3,7 +3,7 @@ import sys
 import requests
 from bs4_base import to_bs
 
-SUMMER_BLOG_URL = 'http://yanruohan.blog.51cto.com/'
+SUMMER_BLOG_URL = 'http://yanruohan.blog.51cto.com'
 FOOT_PATTERN = re.compile(
     r'类别：.*\|阅读\((?P<number>[0-9]+)\)\|回复\((?P<comment>[0-9]+)\)\|赞\((?P<vote>[0-9]+)\)阅读全文>> ')
 
@@ -20,6 +20,16 @@ class BlogItem(object):
     @property
     def title(self):
         return self._bs_obj.h3.text.strip('\n')
+
+    @property
+    def href(self):
+        for item in self._art_foot.find_all('a'):
+            if item.text == '阅读':
+                return SUMMER_BLOG_URL + item.get('href')
+
+    @property
+    def id(self):
+        return self.href.split('/')[-1]
 
     @property
     def content(self):
@@ -40,12 +50,10 @@ def fetch_blogs():
 def printer(limit=5):
     blogs = fetch_blogs()
     for blog in blogs[:limit]:
-        print('title: {}'.format(blog.title))
-        print('\npreview-content: {}'.format(blog.content))
-        print('\nvote: {}'.format(blog.vote))
-        print('number: {}'.format(blog.number))
-        print('comment: {}'.format(blog.comment))
-        print('\n')
+        for key in blog.__dir__():
+            if not key.startswith('_'):
+                print('{}: {}'.format(key, getattr(blog, key)))
+        print()
 
 
 def main():
